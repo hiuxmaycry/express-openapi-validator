@@ -2,7 +2,6 @@ import * as path from 'path';
 import { expect } from 'chai';
 import * as request from 'supertest';
 import { createApp } from './common/app';
-import * as packageJson from '../package.json';
 
 describe('request bodies', () => {
   let app = null;
@@ -20,6 +19,8 @@ describe('request bodies', () => {
       (app) => {
         // Define new coercion routes
         app
+          .post(`${app.basePath}/pets1`, (req, res) => res.send('ok'))
+          .post(`${app.basePath}/pets2`, (req, res) => res.send('ok'))
           .post(`${app.basePath}/415_test`, (req, res) => ({
             success: true,
             ...req,
@@ -51,6 +52,28 @@ describe('request bodies', () => {
       .expect(415)
       .then((r) => {
         expect(r.body.message).includes('unsupported media type');
+      }));
+
+  it.only('should fail with required name in pet1 endpoint', async () =>
+    request(app)
+      .post(`${app.basePath}/pets1`)
+      .send({
+        name: null,
+      })
+      .expect(400)
+      .then((r) => {
+        expect(r.body.errors[0].path).to.equal('/body/name');
+      }));
+
+  it.only('should fail with required name in pet2 endpoint', async () =>
+    request(app)
+      .post(`${app.basePath}/pets2`)
+      .send({
+        name: null,
+      })
+      .expect(400)
+      .then((r) => {
+        expect(r.body.errors[0].path).to.equal('/body/name');
       }));
 
   it('should return 200 if text/plain request body is satisfied', async () => {

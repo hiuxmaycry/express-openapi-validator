@@ -29,6 +29,36 @@ paths:
         '200':
           description: OK
 
+  /pets1:
+    post:
+      operationId: addPet1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: external.ref.yaml#/NewPet
+      responses:
+        '200':
+          description: pet response
+          content:
+            application/json: {}
+
+  /pets2:
+    post:
+      operationId: addPet2
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: external.ref.yaml#/NewPet
+      responses:
+        '200':
+          description: pet response
+          content:
+            application/json: {}
+
   /request_bodies_ref:
     post:
       parameters:
